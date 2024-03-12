@@ -13,8 +13,31 @@ $(document).ready(function(){
         localStorage.dob = dob.getTime();
     };
 
+    function getDobFromUrl()
+    {
+        // Try to get dob from query string
+        var queryStringParams = new URLSearchParams(window.location.search);
+        var dobFromQuery = queryStringParams.get("dob");
+        if (dobFromQuery) return new Date(dobFromQuery);
+
+        // Fallback to getting dob from URL path
+        var pathSegments = window.location.pathname.split('/');
+        var lastSegment = pathSegments.pop() || pathSegments.pop(); // Handle potential trailing slash
+        if (lastSegment && !isNaN(Date.parse(lastSegment))) {
+            return new Date(lastSegment);
+        }
+
+        // No valid dob found in URL
+        return null;
+    };
+
     function load()
     {
+
+        // First, try to get dob from URL
+        var dobFromUrl = getDobFromUrl();
+        if (dobFromUrl) return dobFromUrl;
+
         var dob;
         if (dob = localStorage.getItem("dob"))
         {
